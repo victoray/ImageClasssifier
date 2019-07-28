@@ -8,28 +8,17 @@ import json
 
 
 def process_image(image):
-    ''' Scales, crops, and normalizes a PIL image for a PyTorch model,
-        returns an Numpy array
-    '''
+    """
+       Scales, crops, and normalizes a PIL image for a PyTorch model,
+       returns an Numpy array
+        Arguments:
+            image - image to be processed
+        Returns:
+            np_image - a numpy representation of the image
+    """
 
     # TODO: Process a PIL image for use in a PyTorch model
-#     img = image.resize((256, 256))
-#     width, height = img.size
 
-#     left = (width - 224) / 2
-#     top = (height - 224) / 2
-#     right = (width + 224) / 2
-#     bottom = (height + 224) / 2
-
-#     # Crop the center of the image
-#     img_crop = img.crop((left, top, right, bottom))
-
-#     np_image = np.array(img_crop) / 255
-#     mean = np.array([0.485, 0.456, 0.406])
-#     std = np.array([0.229, 0.224, 0.225])
-#     np_image = (np_image - mean) / std
-#     np_trans = np_image.transpose(2, 0, 1)
-    
     preprocess = transforms.Compose([
         transforms.Resize(256),
         transforms.CenterCrop(224),
@@ -38,13 +27,23 @@ def process_image(image):
     ])
     
     image_t = preprocess(image)
-    np_trans = image_t.numpy()
+    np_image = image_t.numpy()
     
-    return np_trans
+    return np_image
 
 
 def predict(image_path, model, device, topk=5):
-    ''' Predict the class (or classes) of an image using a trained deep learning model.
+    '''
+        Predict the class (or classes) of an image using a trained deep learning model.
+        Arguments:
+            image_path - path to the image file
+            model - a trained model
+            device - The device for training can be cuda or cpu
+            topk - number of top classes to return. Default is 5
+        Returns:
+             top_p - a list of the top probabilities
+             classes - a list of top indexes
+
     '''
 
     # TODO: Implement the code to predict the class from an image file
@@ -63,21 +62,28 @@ def predict(image_path, model, device, topk=5):
     top_p, top_class = ps.topk(topk)
 
     class_to_idx_inverted = {model.class_to_idx[k]: k for k in model.class_to_idx}
-    mapped_classes = list()
+    classes = list()
 
     for label in top_class.tolist()[0]:
-        mapped_classes.append(class_to_idx_inverted[label])
+        classes.append(class_to_idx_inverted[label])
 
     top_p = top_p.tolist()[0]
 
-    return top_p, mapped_classes
+    return top_p, classes
 
 
 def cat_to_name(category_names):
-    with open('cat_to_name.json', 'r') as f:
-        category_names = json.load(f)
+    """
 
-    return category_names
+    :param
+        category_names: a path to the json name matching
+    :return:
+        categories: returns a dictionary with the names
+    """
+    with open(category_names, 'r') as f:
+        categories = json.load(f)
+
+    return categories
 
 
 if __name__ == '__main__':

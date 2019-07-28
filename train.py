@@ -1,11 +1,21 @@
-import argparse
-from model import create_model, save_model
 import torch
+from model import create_model, save_model
 from torchvision import transforms, datasets, models
 from train_args import train_args
 
 
 def load_data(data_dir):
+    """
+        This function loads the dataset from the given directory and preprocesses them
+        for training and testing.
+        Arguments:
+          data_dir - location of the dataset.
+        Returns:
+         trainloader - processed dataloader images for training
+         testloader - processed dataloader images for testing
+         validationloader - processed dataloader images for validation
+         train_datasets - processed images for training.
+    """
     train_dir = data_dir + '/train'
     valid_dir = data_dir + '/valid'
     test_dir = data_dir + '/test'
@@ -39,9 +49,20 @@ def load_data(data_dir):
     return trainloader, testloader, validationloader, train_datasets
 
 
-
 def train(model, device, epochs, criterion, optimizer, trainloader, validationloader):
-
+    """
+        This function Trains the model with the given parameters.
+        Arguments:
+            model - The Pre-trained model for transfer learning
+            device - The device for training can be cuda or cpu
+            epochs - Number of cycles for training
+            criterion - Measure of training Loss
+            optimizer - Training optimizer for updating weights
+            trainloader - processed dataloader images for training
+            validationloader - processed dataloader images for validation
+        Returns:
+            model - Trained model
+    """
     model.to(device)
     for i in range(epochs):
         running_loss = 0
@@ -83,7 +104,18 @@ def train(model, device, epochs, criterion, optimizer, trainloader, validationlo
                   f'Validation Accuracy: {(accuracy / len(validationloader)) * 100:.3f}%')
     return model
 
+
 def test(model, device, testloader):
+    """
+        This function loads the dataset from the given directory and preprocesses them
+        for training and testing.
+        Arguments:
+            model - The Pre-trained model for transfer learning
+            device - The device for training can be cuda or cpu
+            testloader - processed dataloader images for testing
+        Returns:
+            None
+    """
     model.to(device)
     model.eval()
     accuracy = 0
@@ -100,9 +132,7 @@ def test(model, device, testloader):
             accuracy += torch.mean(equals.type(torch.FloatTensor)).item()
 
         else:
-            print(f'Accuracy: {(accuracy / len(testloader)) * 100:.3f}% '
-                  f'Test Losses: {test_losses / len(testloader):.3f}')
-
+            print(f'Accuracy: {(accuracy / len(testloader)) * 100:.3f}% ')
 
 
 if __name__ == '__main__':
@@ -116,23 +146,22 @@ if __name__ == '__main__':
     learning_rate = input_args.learning_rate
     save_dir = input_args.save_dir
 
-    trainloader, testloader, validationloader, train_datasets= load_data(data_dir)
+    trainloader, testloader, validationloader, train_datasets = load_data(data_dir)
 
     model, criterion, optimizer, parameters = create_model(arch, lr=learning_rate, hidden_units=hidden_units)
     device = 'cuda' if gpu else 'cpu'
 
     print(f"Training Model with {arch}.......\n")
     trained_model = train(model=model, device=device, epochs=epochs, criterion=criterion,
-          optimizer=optimizer, trainloader=trainloader, validationloader=validationloader)
+                          optimizer=optimizer, trainloader=trainloader, validationloader=validationloader)
 
     print("Training Complete\n")
+
     print("Testing Model")
     test(trained_model, device, testloader)
+
     print("Testing Complete\n")
 
     save_model(arch + save_dir, train_datasets, trained_model, parameters)
-    
+
     print("Model Saved Succesfully")
-
-
-

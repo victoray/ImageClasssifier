@@ -2,6 +2,15 @@ import argparse
 
 
 def train_args():
+    """
+        Retrieves and parses the 3 command line arguments provided by the user when
+        they run the program from a terminal window. This function uses Python's
+        argparse module to created and defined these 3 command line arguments. If
+        the user fails to provide some or all of the 3 arguments, then the default
+        values are used for the missing arguments.
+
+        :return: results: data structure that stores the command line arguments object
+     """
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--data_dir', action='store',
