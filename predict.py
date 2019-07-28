@@ -95,7 +95,7 @@ if __name__ == '__main__':
     category_names = input_args.category_names
     gpu = input_args.gpu
 
-    device = 'cuda' if gpu else 'cpu'
+    device = 'cuda' if gpu and torch.cuda.is_available() else 'cpu'
 
     model = load_checkpoint(checkpoint)
 

@@ -33,7 +33,7 @@ for name, model in archs.items():
         pass
 
 
-def create_model(arch, lr=0.003, hidden_units=256):
+def create_model(arch, output, lr=0.003, hidden_units=256):
     """
 
     :param arch: The pretrained model to create the training model
@@ -62,7 +62,7 @@ def create_model(arch, lr=0.003, hidden_units=256):
     network = nn.Sequential(nn.Linear(input, hidden_units),
                             nn.ReLU(),
                             nn.Dropout(0.2),
-                            nn.Linear(hidden_units, 102),
+                            nn.Linear(hidden_units, output),
                             nn.LogSoftmax(dim=1))
 
     if arch in fc:

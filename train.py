@@ -148,8 +148,9 @@ if __name__ == '__main__':
 
     trainloader, testloader, validationloader, train_datasets = load_data(data_dir)
 
-    model, criterion, optimizer, parameters = create_model(arch, lr=learning_rate, hidden_units=hidden_units)
-    device = 'cuda' if gpu else 'cpu'
+    output = len(train_datasets.class_to_idx)
+    model, criterion, optimizer, parameters = create_model(arch,output, lr=learning_rate, hidden_units=hidden_units)
+    device = 'cuda' if gpu and torch.cuda.is_available() else 'cpu'
 
     print(f"Training Model with {arch}.......\n")
     trained_model = train(model=model, device=device, epochs=epochs, criterion=criterion,
