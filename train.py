@@ -1,5 +1,5 @@
 import argparse
-from model import create_model
+from model import create_model, save_model
 import torch
 from torchvision import transforms, datasets, models
 from train_args import train_args
@@ -36,7 +36,7 @@ def load_data(data_dir):
     testloader = torch.utils.data.DataLoader(test_datasets, batch_size=64)
     validationloader = torch.utils.data.DataLoader(validation_datasets, batch_size=64)
 
-    return trainloader, testloader, validationloader
+    return trainloader, testloader, validationloader, train_datasets
 
 
 
@@ -79,7 +79,7 @@ def train(model, device, epochs, criterion, optimizer, trainloader, validationlo
             model.train()
 
             print(f'Training Loss: {running_loss / len(trainloader):.3f} '
-                  f'Validation Losses: {test_losses / len(validationloader):.3f} '
+                  f'Validation Loss: {test_losses / len(validationloader):.3f} '
                   f'Validation Accuracy: {(accuracy / len(validationloader)) * 100:.3f}%')
     return model
 
@@ -103,9 +103,6 @@ def test(model, device, testloader):
             print(f'Accuracy: {(accuracy / len(testloader)) * 100:.3f}% '
                   f'Test Losses: {test_losses / len(testloader):.3f}')
 
-def save_model(save_dir, model):
-    checkpoint = {}
-    torch.save(checkpoint, save_dir)
 
 
 if __name__ == '__main__':
@@ -119,12 +116,12 @@ if __name__ == '__main__':
     learning_rate = input_args.learning_rate
     save_dir = input_args.save_dir
 
-    trainloader, testloader, validationloader = load_data(data_dir)
+    trainloader, testloader, validationloader, train_datasets= load_data(data_dir)
 
-    model, criterion, optimizer = create_model(arch, lr=learning_rate, hidden_units=hidden_units)
+    model, criterion, optimizer, parameters = create_model(arch, lr=learning_rate, hidden_units=hidden_units)
     device = 'cuda' if gpu else 'cpu'
 
-    print("Training Model.......\n")
+    print(f"Training Model with {arch}.......\n")
     trained_model = train(model=model, device=device, epochs=epochs, criterion=criterion,
           optimizer=optimizer, trainloader=trainloader, validationloader=validationloader)
 
@@ -133,8 +130,9 @@ if __name__ == '__main__':
     test(trained_model, device, testloader)
     print("Testing Complete\n")
 
-    save_model(save_dir, trained_model)
-    print("Model Saved")
+    save_model(arch + save_dir, train_datasets, trained_model, parameters)
+    
+    print("Model Saved Succesfully")
 
 
 
