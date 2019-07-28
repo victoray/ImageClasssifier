@@ -4,10 +4,10 @@ from torchvision import transforms, datasets, models
 import scipy
 
 archs = dict()
-archs['resnet18'] = [models.resnet18(pretrained=True), 512]
 archs['alexnet'] = [models.alexnet(pretrained=True), 9216]
 archs['vgg16'] = [models.vgg16(pretrained=True), 25088]
-archs['densenet'] = models.densenet121(pretrained=True), 1024
+# archs['resnet18'] = [models.resnet18(pretrained=True), 512]
+# archs['densenet'] = models.densenet121(pretrained=True), 1024
 # archs['squeezenet'] = [models.squeezenet1_0(pretrained=True), 512]
 # archs['inception'] = models.inception_v3(pretrained=True), 2048
 # archs['googlenet'] = models.googlenet(pretrained=True), 1024
