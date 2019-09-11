@@ -1,8 +1,8 @@
-import numpy as np
+# import numpy as np
 import PIL.Image as Image
 import torch
-from predict_args import predict_args
-from model import load_checkpoint
+from classifier.predict_args import predict_args
+from classifier.model import load_checkpoint
 from torchvision import transforms, datasets, models
 import json
 
